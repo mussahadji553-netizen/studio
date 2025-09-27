@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useState, ReactNode } from 'react';
+import { createContext, useState, ReactNode, useEffect } from 'react';
 
 type UserStatus = 'guest' | 'pending' | 'approved';
 
@@ -19,7 +19,26 @@ interface AuthContextType {
 export const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<AuthUser | null>(null);
+  const [user, setUser] = useState<AuthUser | null>(() => {
+    if (typeof window === 'undefined') {
+      return null;
+    }
+    try {
+      const item = window.localStorage.getItem('betpro-user');
+      return item ? JSON.parse(item) : null;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  });
+
+  useEffect(() => {
+    if (user) {
+      window.localStorage.setItem('betpro-user', JSON.stringify(user));
+    } else {
+      window.localStorage.removeItem('betpro-user');
+    }
+  }, [user]);
 
   const login = (email: string, name: string, status: UserStatus) => {
     setUser({ email, name, status });
