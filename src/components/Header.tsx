@@ -13,7 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { LogOut, Trophy } from 'lucide-react';
+import { LogOut, Trophy, User } from 'lucide-react';
 
 export function Header() {
   const auth = useContext(AuthContext);
@@ -61,8 +61,11 @@ export function Header() {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Button asChild>
-                <Link href="/login">Login / Register</Link>
+              <Button asChild variant="ghost" size="sm">
+                <Link href="/login">
+                  <User className="mr-2 h-4 w-4" />
+                  Login / Register
+                </Link>
               </Button>
             )}
           </nav>

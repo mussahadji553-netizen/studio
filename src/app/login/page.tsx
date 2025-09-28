@@ -3,7 +3,6 @@
 import { useContext, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { AuthContext } from '@/context/AuthContext';
-import { users } from '@/lib/data';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -12,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Trophy, AlertCircle, Loader2, CheckCircle } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { registerNewUser } from '../admin/actions';
+import { users } from '@/lib/data';
 
 function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
     return (
@@ -63,11 +63,11 @@ export default function LoginPage() {
     setLoginError(null);
     const user = users.find((u) => u.phone === loginPhone);
     if (user) {
+      auth?.login(user.phone, user.name, user.status);
       if (user.status === 'approved') {
-        auth?.login(user.phone, user.name, user.status);
-        router.push('/');
+        router.push('/home');
       } else {
-        setLoginError('Your account registration is still pending approval.');
+         router.push('/home'); // Go to home to see VIP message
       }
     } else {
       setLoginError('No user found with this phone number. Please register first.');
@@ -84,8 +84,8 @@ export default function LoginPage() {
         if (result.success && result.user) {
             auth?.login(result.user.phone, result.user.name, result.user.status);
             setRegSuccess(result.message);
-            // Optionally redirect after a delay
-            setTimeout(() => router.push('/'), 2000);
+            // Redirect after a delay to show the success message
+            setTimeout(() => router.push('/home'), 2000);
         } else {
             setRegError(result.message);
         }
@@ -95,26 +95,26 @@ export default function LoginPage() {
   const handleGoogleSignIn = () => {
     // This would be the place to integrate Firebase Google Sign-In
     // For now, we'll simulate a login.
-    const googleUser = { name: 'Google User', phone: '+19876543210' };
-    auth?.login(googleUser.phone, googleUser.name, 'approved');
-    router.push('/');
+    const googleUser = { name: 'Google User', phone: '+19876543210', status: 'approved' as const };
+    auth?.login(googleUser.phone, googleUser.name, googleUser.status);
+    router.push('/home');
   }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
-      <Tabs defaultValue="login" className="w-full max-w-md">
+      <Tabs defaultValue="register" className="w-full max-w-md">
         <div className="flex justify-center mb-4">
             <Trophy className="h-10 w-10 text-primary" />
         </div>
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="login">Login</TabsTrigger>
-          <TabsTrigger value="register">Register</TabsTrigger>
+          <TabsTrigger value="register">Register for VIP</TabsTrigger>
         </TabsList>
         <TabsContent value="login">
           <Card>
             <CardHeader className="space-y-1 text-center">
               <CardTitle className="text-2xl font-headline">Welcome Back</CardTitle>
-              <CardDescription>Enter your phone number to access your account.</CardDescription>
+              <CardDescription>Enter your phone number to check your VIP status.</CardDescription>
             </CardHeader>
             <form onSubmit={handleLogin}>
               <CardContent className="space-y-4">
@@ -153,25 +153,11 @@ export default function LoginPage() {
         <TabsContent value="register">
           <Card>
             <CardHeader className="space-y-1 text-center">
-              <CardTitle className="text-2xl font-headline">Create an Account</CardTitle>
-              <CardDescription>Join our community to get access to VIP tips.</CardDescription>
+              <CardTitle className="text-2xl font-headline">Register for VIP</CardTitle>
+              <CardDescription>Follow payment instructions after registering.</CardDescription>
             </CardHeader>
             <form onSubmit={handleRegister}>
                 <CardContent className="space-y-4">
-                    <Button variant="outline" className="w-full" onClick={handleGoogleSignIn} type="button">
-                        <GoogleIcon className="mr-2" />
-                        Sign up with Google
-                    </Button>
-                    <div className="relative">
-                        <div className="absolute inset-0 flex items-center">
-                            <span className="w-full border-t" />
-                        </div>
-                        <div className="relative flex justify-center text-xs uppercase">
-                            <span className="bg-background px-2 text-muted-foreground">
-                            Or continue with
-                            </span>
-                        </div>
-                    </div>
                     <div className="space-y-2">
                       <Label htmlFor="register-name">Full Name</Label>
                       <Input id="register-name" placeholder="John Doe" value={regName} onChange={e => setRegName(e.target.value)} required disabled={isPending}/>
