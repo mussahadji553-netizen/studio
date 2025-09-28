@@ -8,11 +8,11 @@ interface VipAccessMessageProps {
 }
 
 export function VipAccessMessage({ status }: VipAccessMessageProps) {
-  const title = status === 'pending' ? 'Access Pending' : 'Exclusive Content';
+  const title = status === 'pending' ? 'Access Pending' : 'Join VIP';
   const description =
     status === 'pending'
       ? 'Your account is currently awaiting admin approval. We appreciate your patience.'
-      : 'You need to be an approved member to view VIP tips. Register or log in to get started.';
+      : 'You need to be an approved member to view VIP tips. Pay for a subscription to get started.';
 
   return (
     <div className="flex items-center justify-center py-12">
@@ -25,10 +25,22 @@ export function VipAccessMessage({ status }: VipAccessMessageProps) {
           <CardDescription>{description}</CardDescription>
         </CardHeader>
         <CardContent>
+            {status !== 'pending' && (
+                 <div className="text-left bg-muted/50 rounded-lg p-4 mb-6 space-y-2">
+                    <h4 className='font-bold text-center mb-4'>Chagua Kifurushi</h4>
+                    <div className='flex justify-between items-center'>
+                        <p className="font-semibold">Mwezi (Siku 30)</p>
+                        <p className="font-bold text-primary">T.SHL 50,000</p>
+                    </div>
+                    <div className='flex justify-between items-center'>
+                        <p className="font-semibold">Wiki (Siku 7)</p>
+                        <p className="font-bold text-primary">T.SHL 15,000</p>
+                    </div>
+                </div>
+            )}
           <p className="text-muted-foreground mb-4">
-            For faster approval or any questions, please contact us.
+            For payment and account approval, please contact us on WhatsApp.
           </p>
-          <p className="text-lg font-semibold mb-4">"weka ujumbe wako"</p>
           <Button asChild className="bg-green-500 hover:bg-green-600 text-white">
             <Link href="https://wa.me/255682666363" target="_blank" rel="noopener noreferrer">
               <MessageCircle className="mr-2 h-4 w-4" />
