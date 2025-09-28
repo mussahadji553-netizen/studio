@@ -46,7 +46,7 @@ export function VipAccessMessage({ status }: VipAccessMessageProps) {
                 </div>
             )}
           <p className="text-muted-foreground mb-4">
-            Baada ya kulipia, wasiliana nasi WhatsApp kuthibitisha malipo na kuwezeshwa akaunti yako.
+            UKISHA LIPIA NJOO WHATSAPP NA SCREENSHOT YA MUHAMALA
           </p>
           <Button asChild className="bg-green-500 hover:bg-green-600 text-white">
             <Link href="https://wa.me/255682666363" target="_blank" rel="noopener noreferrer">
