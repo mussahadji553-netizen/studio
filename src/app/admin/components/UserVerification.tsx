@@ -74,7 +74,7 @@ export function UserVerification() {
     startTransition(async () => {
       const result = await approveUser(userId);
       if (result.success) {
-        setUsers(users.map(u => u.id === userId ? {...u, status: 'approved'} : u));
+        setUsers(prevUsers => prevUsers.map(u => u.id === userId ? {...u, status: 'approved'} : u));
         toast({ title: "Success", description: result.message });
         if(selectedUser?.id === userId) {
             setSelectedUser(null);
@@ -90,7 +90,7 @@ export function UserVerification() {
         if(confirm('Are you sure you want to remove this user? This action cannot be undone.')) {
             const result = await removeUser(userId);
             if (result.success) {
-                setUsers(users.filter(u => u.id !== userId));
+                setUsers(prevUsers => prevUsers.filter(u => u.id !== userId));
                 toast({ title: "Success", description: result.message });
             } else {
                 toast({ variant: "destructive", title: "Error", description: result.message });

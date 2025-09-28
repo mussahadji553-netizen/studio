@@ -3,9 +3,7 @@
 import { verifyUserAccount, type VerifyUserAccountInput, type VerifyUserAccountOutput } from '@/ai/flows/admin-account-verification';
 import { revalidatePath } from 'next/cache';
 import type { User } from '@/lib/types';
-
-// Mock database interactions
-let mockUsers = (await import('@/lib/data')).users;
+import { users as mockUsers } from '@/lib/data';
 
 export async function registerNewUser(name: string, phone: string): Promise<{ success: boolean; message: string; user?: User }> {
   console.log(`Registering new user: ${name}, ${phone}`);
@@ -26,6 +24,7 @@ export async function registerNewUser(name: string, phone: string): Promise<{ su
   console.log('Current users:', mockUsers);
   
   revalidatePath('/admin');
+  revalidatePath('/login');
   
   return { success: true, message: 'Registration successful! Your account is pending admin approval.', user: newUser };
 }
