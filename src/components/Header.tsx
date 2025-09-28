@@ -50,7 +50,7 @@ export function Header() {
                   <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
                       <p className="text-sm font-medium leading-none">{auth.user.name}</p>
-                      <p className="text-xs leading-none text-muted-foreground">{auth.user.email}</p>
+                      <p className="text-xs leading-none text-muted-foreground">{auth.user.phone}</p>
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />

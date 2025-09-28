@@ -55,7 +55,7 @@ export function UserVerification() {
     try {
       const result = await analyzeUserForVerification({
         userName: selectedUser.name,
-        userEmail: selectedUser.email,
+        userPhone: selectedUser.phone,
         registrationDetails: selectedUser.registrationDetails,
       });
       setAnalysisResult(result);
@@ -131,7 +131,7 @@ export function UserVerification() {
                         </Avatar>
                         <div>
                           <p className="font-medium">{user.name}</p>
-                          <p className="text-sm text-muted-foreground">{user.email}</p>
+                          <p className="text-sm text-muted-foreground">{user.phone}</p>
                         </div>
                       </div>
                     </TableCell>
@@ -185,7 +185,7 @@ export function UserVerification() {
                                 </Avatar>
                                 <div>
                                 <p className="font-medium">{user.name}</p>
-                                <p className="text-sm text-muted-foreground">{user.email}</p>
+                                <p className="text-sm text-muted-foreground">{user.phone}</p>
                                 </div>
                             </div>
                         </TableCell>
@@ -211,7 +211,7 @@ export function UserVerification() {
             </DialogHeader>
             <div className="space-y-4 py-4">
               <p><strong>Name:</strong> {selectedUser.name}</p>
-              <p><strong>Email:</strong> {selectedUser.email}</p>
+              <p><strong>Phone:</strong> {selectedUser.phone}</p>
               <p><strong>Details:</strong> {selectedUser.registrationDetails}</p>
             </div>
             

@@ -17,7 +17,7 @@ import {z} from 'genkit';
 
 const VerifyUserAccountInputSchema = z.object({
   userName: z.string().describe('The name of the user.'),
-  userEmail: z.string().email().describe('The email address of the user.'),
+  userPhone: z.string().describe('The phone number of the user.'),
   registrationDetails: z
     .string()
     .describe(
@@ -51,7 +51,7 @@ const verificationPrompt = ai.definePrompt({
   Based on the following information, provide a summary of the user and highlight any potential red flags that might indicate a fraudulent account.
 
   User Name: {{{userName}}}
-  User Email: {{{userEmail}}}
+  User Phone: {{{userPhone}}}
   Registration Details: {{{registrationDetails}}}
 
   Respond in a professional tone. Make a determination of whether the account should be automatically approved or not. Set isApproved to true if it should be auto-approved, otherwise set it to false.`,

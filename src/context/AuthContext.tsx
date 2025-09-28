@@ -6,13 +6,13 @@ type UserStatus = 'guest' | 'pending' | 'approved';
 
 interface AuthUser {
   name: string;
-  email: string;
+  phone: string;
   status: UserStatus;
 }
 
 interface AuthContextType {
   user: AuthUser | null;
-  login: (email: string, name: string, status: UserStatus) => void;
+  login: (phone: string, name: string, status: UserStatus) => void;
   logout: () => void;
 }
 
@@ -40,8 +40,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [user]);
 
-  const login = (email: string, name: string, status: UserStatus) => {
-    setUser({ email, name, status });
+  const login = (phone: string, name: string, status: UserStatus) => {
+    setUser({ phone, name, status });
   };
 
   const logout = () => {

@@ -45,25 +45,25 @@ function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
 export default function LoginPage() {
   const auth = useContext(AuthContext);
   const router = useRouter();
-  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPhone, setLoginPhone] = useState('');
   const [regName, setRegName] = useState('');
-  const [regEmail, setRegEmail] = useState('');
+  const [regPhone, setRegPhone] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    const user = users.find((u) => u.email.toLowerCase() === loginEmail.toLowerCase());
+    const user = users.find((u) => u.phone === loginPhone);
     if (user) {
       if (user.status === 'approved') {
-        auth?.login(user.email, user.name, user.status);
+        auth?.login(user.phone, user.name, user.status);
         router.push('/');
       } else {
         setError('Your account registration is still pending approval.');
       }
     } else {
-      setError('No user found with this email. Please register first.');
+      setError('No user found with this phone number. Please register first.');
     }
   };
   
@@ -73,8 +73,8 @@ export default function LoginPage() {
     setSuccess(null);
     // In a real app, you would call an API to create the user.
     // Here we just simulate it.
-    console.log(`New registration: ${regName}, ${regEmail}`);
-    auth?.login(regEmail, regName, 'pending');
+    console.log(`New registration: ${regName}, ${regPhone}`);
+    auth?.login(regPhone, regName, 'pending');
     setSuccess('Registration successful! Your account is pending admin approval.');
     setTimeout(() => router.push('/'), 2000);
   };
@@ -82,8 +82,8 @@ export default function LoginPage() {
   const handleGoogleSignIn = () => {
     // This would be the place to integrate Firebase Google Sign-In
     // For now, we'll simulate a login.
-    const googleUser = { name: 'Google User', email: 'google.user@example.com' };
-    auth?.login(googleUser.email, googleUser.name, 'approved');
+    const googleUser = { name: 'Google User', phone: '+19876543210' };
+    auth?.login(googleUser.phone, googleUser.name, 'approved');
     router.push('/');
   }
 
@@ -101,7 +101,7 @@ export default function LoginPage() {
           <Card>
             <CardHeader className="space-y-1 text-center">
               <CardTitle className="text-2xl font-headline">Welcome Back</CardTitle>
-              <CardDescription>Enter your email to access your account.</CardDescription>
+              <CardDescription>Enter your phone number to access your account.</CardDescription>
             </CardHeader>
             <form onSubmit={handleLogin}>
               <CardContent className="space-y-4">
@@ -120,8 +120,8 @@ export default function LoginPage() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="login-email">Email</Label>
-                  <Input id="login-email" type="email" placeholder="john.doe@example.com" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} required />
+                  <Label htmlFor="login-phone">Phone Number</Label>
+                  <Input id="login-phone" type="tel" placeholder="+255 123 456 789" value={loginPhone} onChange={(e) => setLoginPhone(e.target.value)} required />
                 </div>
                  {error && (
                     <Alert variant="destructive">
@@ -160,12 +160,12 @@ export default function LoginPage() {
                         </div>
                     </div>
                     <div className="space-y-2">
-                    <Label htmlFor="register-name">Full Name</Label>
-                    <Input id="register-name" placeholder="John Doe" value={regName} onChange={e => setRegName(e.target.value)} required />
+                      <Label htmlFor="register-name">Full Name</Label>
+                      <Input id="register-name" placeholder="John Doe" value={regName} onChange={e => setRegName(e.target.value)} required />
                     </div>
                     <div className="space-y-2">
-                    <Label htmlFor="register-email">Email</Label>
-                    <Input id="register-email" type="email" placeholder="john.doe@example.com" value={regEmail} onChange={e => setRegEmail(e.target.value)} required />
+                      <Label htmlFor="register-phone">Phone Number</Label>
+                      <Input id="register-phone" type="tel" placeholder="+255 123 456 789" value={regPhone} onChange={e => setRegPhone(e.target.value)} required />
                     </div>
                      {success && (
                         <Alert>
@@ -176,7 +176,7 @@ export default function LoginPage() {
                     )}
                 </CardContent>
                 <CardFooter>
-                    <Button className="w-full" type="submit">Register with Email</Button>
+                    <Button className="w-full" type="submit">Register</Button>
                 </CardFooter>
             </form>
           </Card>
