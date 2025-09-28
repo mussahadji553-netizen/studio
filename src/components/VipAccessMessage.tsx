@@ -1,13 +1,16 @@
+'use client';
+
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Lock, MessageCircle } from 'lucide-react';
+import { useContext } from 'react';
+import { AuthContext } from '@/context/AuthContext';
 
-interface VipAccessMessageProps {
-  status: 'pending' | 'guest';
-}
+export function VipAccessMessage() {
+  const auth = useContext(AuthContext);
+  const status = auth?.user?.status || 'guest';
 
-export function VipAccessMessage({ status }: VipAccessMessageProps) {
   const title = status === 'pending' ? 'Uanachama Unasubiri' : 'Jiunge na VIP';
   const description =
     status === 'pending'
@@ -52,6 +55,7 @@ export function VipAccessMessage({ status }: VipAccessMessageProps) {
                         <h4 className='font-bold text-center mb-2'>Njia ya Malipo</h4>
                         <p className='text-center font-semibold'>AIRTEL MONEY</p>
                         <p className='text-center'>Lipa Namba: <span className='font-bold text-primary'>132228277</span></p>
+                        <p className='text-center'>Jina: <span className='font-bold'>MUSSA HAJI</span></p>
                     </div>
                 </div>
             )}
