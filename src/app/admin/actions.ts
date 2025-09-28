@@ -2,9 +2,34 @@
 
 import { verifyUserAccount, type VerifyUserAccountInput, type VerifyUserAccountOutput } from '@/ai/flows/admin-account-verification';
 import { revalidatePath } from 'next/cache';
+import type { User } from '@/lib/types';
 
 // Mock database interactions
 let mockUsers = (await import('@/lib/data')).users;
+
+export async function registerNewUser(name: string, phone: string): Promise<{ success: boolean; message: string; user?: User }> {
+  console.log(`Registering new user: ${name}, ${phone}`);
+  const existingUser = mockUsers.find(u => u.phone === phone);
+  if (existingUser) {
+    return { success: false, message: 'User with this phone number already exists.' };
+  }
+
+  const newUser: User = {
+    id: (mockUsers.length + 1).toString(),
+    name,
+    phone,
+    status: 'pending',
+    registrationDetails: `Registered on ${new Date().toLocaleDateString()}`,
+  };
+
+  mockUsers.push(newUser);
+  console.log('Current users:', mockUsers);
+  
+  revalidatePath('/admin');
+  
+  return { success: true, message: 'Registration successful! Your account is pending admin approval.', user: newUser };
+}
+
 
 export async function analyzeUserForVerification(input: VerifyUserAccountInput): Promise<VerifyUserAccountOutput> {
   try {

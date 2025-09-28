@@ -1,6 +1,6 @@
 'use client';
 
-import { useContext, useState } from 'react';
+import { useContext, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { AuthContext } from '@/context/AuthContext';
 import { users } from '@/lib/data';
@@ -9,9 +9,9 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Trophy, AlertCircle } from 'lucide-react';
+import { Trophy, AlertCircle, Loader2, CheckCircle } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Separator } from '@/components/ui/separator';
+import { registerNewUser } from '../admin/actions';
 
 function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
     return (
@@ -45,38 +45,51 @@ function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
 export default function LoginPage() {
   const auth = useContext(AuthContext);
   const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+
+  // Login state
   const [loginPhone, setLoginPhone] = useState('');
+  const [loginError, setLoginError] = useState<string | null>(null);
+
+  // Register state
   const [regName, setRegName] = useState('');
   const [regPhone, setRegPhone] = useState('');
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
+  const [regError, setRegError] = useState<string | null>(null);
+  const [regSuccess, setRegSuccess] = useState<string | null>(null);
+
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
+    setLoginError(null);
     const user = users.find((u) => u.phone === loginPhone);
     if (user) {
       if (user.status === 'approved') {
         auth?.login(user.phone, user.name, user.status);
         router.push('/');
       } else {
-        setError('Your account registration is still pending approval.');
+        setLoginError('Your account registration is still pending approval.');
       }
     } else {
-      setError('No user found with this phone number. Please register first.');
+      setLoginError('No user found with this phone number. Please register first.');
     }
   };
   
   const handleRegister = (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
-    setSuccess(null);
-    // In a real app, you would call an API to create the user.
-    // Here we just simulate it.
-    console.log(`New registration: ${regName}, ${regPhone}`);
-    auth?.login(regPhone, regName, 'pending');
-    setSuccess('Registration successful! Your account is pending admin approval.');
-    setTimeout(() => router.push('/'), 2000);
+    setRegError(null);
+    setRegSuccess(null);
+    
+    startTransition(async () => {
+        const result = await registerNewUser(regName, regPhone);
+        if (result.success && result.user) {
+            auth?.login(result.user.phone, result.user.name, result.user.status);
+            setRegSuccess(result.message);
+            // Optionally redirect after a delay
+            setTimeout(() => router.push('/'), 2000);
+        } else {
+            setRegError(result.message);
+        }
+    });
   };
 
   const handleGoogleSignIn = () => {
@@ -123,11 +136,11 @@ export default function LoginPage() {
                   <Label htmlFor="login-phone">Phone Number</Label>
                   <Input id="login-phone" type="tel" placeholder="+255 123 456 789" value={loginPhone} onChange={(e) => setLoginPhone(e.target.value)} required />
                 </div>
-                 {error && (
+                 {loginError && (
                     <Alert variant="destructive">
                       <AlertCircle className="h-4 w-4" />
                       <AlertTitle>Login Failed</AlertTitle>
-                      <AlertDescription>{error}</AlertDescription>
+                      <AlertDescription>{loginError}</AlertDescription>
                     </Alert>
                 )}
               </CardContent>
@@ -161,22 +174,32 @@ export default function LoginPage() {
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="register-name">Full Name</Label>
-                      <Input id="register-name" placeholder="John Doe" value={regName} onChange={e => setRegName(e.target.value)} required />
+                      <Input id="register-name" placeholder="John Doe" value={regName} onChange={e => setRegName(e.target.value)} required disabled={isPending}/>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="register-phone">Phone Number</Label>
-                      <Input id="register-phone" type="tel" placeholder="+255 123 456 789" value={regPhone} onChange={e => setRegPhone(e.target.value)} required />
+                      <Input id="register-phone" type="tel" placeholder="+255 123 456 789" value={regPhone} onChange={e => setRegPhone(e.target.value)} required disabled={isPending}/>
                     </div>
-                     {success && (
+                     {regSuccess && (
                         <Alert>
-                          <AlertCircle className="h-4 w-4" />
-                          <AlertTitle>Success</AlertTitle>
-                          <AlertDescription>{success}</AlertDescription>
+                          <CheckCircle className="h-4 w-4" />
+                          <AlertTitle>Success!</AlertTitle>
+                          <AlertDescription>{regSuccess}</AlertDescription>
+                        </Alert>
+                    )}
+                    {regError && (
+                        <Alert variant="destructive">
+                            <AlertCircle className="h-4 w-4" />
+                            <AlertTitle>Registration Failed</AlertTitle>
+                            <AlertDescription>{regError}</AlertDescription>
                         </Alert>
                     )}
                 </CardContent>
                 <CardFooter>
-                    <Button className="w-full" type="submit">Register</Button>
+                    <Button className="w-full" type="submit" disabled={isPending}>
+                        {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        Register
+                    </Button>
                 </CardFooter>
             </form>
           </Card>
