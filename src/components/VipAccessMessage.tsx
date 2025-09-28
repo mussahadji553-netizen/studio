@@ -30,7 +30,7 @@ export function VipAccessMessage({ status }: VipAccessMessageProps) {
           </p>
           <p className="text-lg font-semibold mb-4">"weka ujumbe wako"</p>
           <Button asChild className="bg-green-500 hover:bg-green-600 text-white">
-            <Link href="https://wa.me/YOUR_WHATSAPP_NUMBER" target="_blank" rel="noopener noreferrer">
+            <Link href="https://wa.me/255682666363" target="_blank" rel="noopener noreferrer">
               <MessageCircle className="mr-2 h-4 w-4" />
               Contact on WhatsApp
             </Link>
